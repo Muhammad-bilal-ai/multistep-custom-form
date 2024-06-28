@@ -17,12 +17,6 @@ const validationSchema = [
     university: Yup.string().required("University is required"),
     degree: Yup.string().required("Degree is required"),
     graduationYear: Yup.number().required("Graduation year is required"),
-    experience: Yup.string(),
-    company: Yup.string(),
-    position: Yup.string(),
-    duration: Yup.string(),
-    city: Yup.string(),
-    country: Yup.string(),
   }),
   Yup.object({
     coverLetter: Yup.string().required("Cover letter is required"),
@@ -38,12 +32,6 @@ const initialValues = {
   university: "",
   degree: "",
   graduationYear: "",
-  experience: false,
-  company: "",
-  position: "",
-  duration: "",
-  city: "",
-  country: "",
   coverLetter: "",
   resume: null,
 };
@@ -186,112 +174,6 @@ const StepTwo = () => (
         className="text-red-600 text-sm mt-1"
       />
     </div>
-    <div className="mb-4">
-      <label
-        htmlFor="experience"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Experience
-      </label>
-      <Field
-        name="experience"
-        type="checkbox"
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <ErrorMessage
-        name="experience"
-        component="div"
-        className="text-red-600 text-sm mt-1"
-      />
-    </div>
-
-    <div className="mb-4">
-      <label
-        htmlFor="company"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Company
-      </label>
-      <Field
-        name="company"
-        type="text"
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <ErrorMessage
-        name="company"
-        component="div"
-        className="text-red-600 text-sm mt-1"
-      />
-    </div>
-    <div className="mb-4">
-      <label
-        htmlFor="position"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Position
-      </label>
-      <Field
-        name="position"
-        type="text"
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <ErrorMessage
-        name="position"
-        component="div"
-        className="text-red-600 text-sm mt-1"
-      />
-    </div>
-    <div className="mb-4">
-      <label
-        htmlFor="duration"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Duration
-      </label>
-      <Field
-        name="duration"
-        type="text"
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <ErrorMessage
-        name="duration"
-        component="div"
-        className="text-red-600 text-sm mt-1"
-      />
-    </div>
-    <div className="mb-4">
-      <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-        City
-      </label>
-      <Field
-        name="city"
-        type="text"
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <ErrorMessage
-        name="city"
-        component="div"
-        className="text-red-600 text-sm mt-1"
-      />
-    </div>
-    <div className="mb-4">
-      <label
-        htmlFor="country"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Country
-      </label>
-      <Field
-        name="country"
-        type="text"
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-      />
-      <ErrorMessage
-        name="country"
-        component="div"
-        className="text-red-600 text-sm mt-1"
-      />
-    </div>
   </>
 );
 
@@ -338,8 +220,14 @@ const StepThree = () => (
 
 const MultiStepForm = () => {
   const [step, setStep] = useState(0);
+  const [formValues, setFormvalues] = useState(initialValues);
 
   const handleNext = (values, actions) => {
+    console.log(
+      "handleNext is called values" + values + " and action: " + actions
+    );
+    console.log("current validationSchemes:", validationSchema[step]);
+    setFormvalues({ ...formValues, ...values });
     if (step === validationSchema.length - 1) {
       // Submit the form
       onSubmit(values, actions);
@@ -352,12 +240,12 @@ const MultiStepForm = () => {
     setStep(step - 1);
   };
 
-  const renderStep = () => {
+  const renderStep = (values) => {
     switch (step) {
       case 0:
         return <StepOne />;
       case 1:
-        return <StepTwo />;
+        return <StepTwo values={values} />;
       case 2:
         return <StepThree />;
       default:
