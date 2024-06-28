@@ -20,7 +20,7 @@ const validationSchema = [
   }),
   Yup.object({
     coverLetter: Yup.string().required("Cover letter is required"),
-    resume: Yup.mixed().required("Resume is required"),
+    // resume: Yup.mixed().required("Resume is required"),
   }),
 ];
 
@@ -33,7 +33,7 @@ const initialValues = {
   degree: "",
   graduationYear: "",
   coverLetter: "",
-  resume: null,
+  //   resume: null,
 };
 
 const StepOne = () => (
@@ -197,7 +197,7 @@ const StepThree = () => (
         className="text-red-600 text-sm mt-1"
       />
     </div>
-    <div className="mb-4">
+    {/* <div className="mb-4">
       <label
         htmlFor="resume"
         className="block text-sm font-medium text-gray-700"
@@ -214,25 +214,23 @@ const StepThree = () => (
         component="div"
         className="text-red-600 text-sm mt-1"
       />
-    </div>
+    </div> */}
   </>
 );
 
 const MultiStepForm = () => {
   const [step, setStep] = useState(0);
-  const [formValues, setFormvalues] = useState(initialValues);
 
-  const handleNext = (values, actions) => {
-    console.log(
-      "handleNext is called values" + values + " and action: " + actions
-    );
-    console.log("current validationSchemes:", validationSchema[step]);
-    setFormvalues({ ...formValues, ...values });
-    if (step === validationSchema.length - 1) {
-      // Submit the form
-      onSubmit(values, actions);
-    } else {
+  const handleNext = async (values, actions) => {
+    if (step < validationSchema.length - 1) {
       setStep(step + 1);
+    } else {
+      await saveFormData(values);
+      console.log(
+        "values at saving form data for step " + step,
+        "vaules: " + values
+      );
+      actions.setSubmitting(false);
     }
   };
 
@@ -253,25 +251,13 @@ const MultiStepForm = () => {
     }
   };
 
-  const onSubmit = async (values, { setSubmitting }) => {
-    try {
-      await saveFormData(values);
-      setSubmitting(false);
-      alert("Application submitted successfully!");
-    } catch (error) {
-      console.error("Failed to submit application", error);
-      setSubmitting(false);
-      alert("Failed to submit application");
-    }
-  };
-
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema[step]}
       onSubmit={handleNext}
     >
-      {({ isSubmitting, values }) => (
+      {({ values }) => (
         <Form className="max-w-lg mx-auto p-8 bg-white shadow-md rounded-md">
           {renderStep(values)}
           <div className="flex justify-between mt-4">
@@ -286,7 +272,6 @@ const MultiStepForm = () => {
             )}
             <button
               type="submit"
-              disabled={isSubmitting}
               className="px-4 py-2 bg-blue-600 text-white rounded-md"
             >
               {step === validationSchema.length - 1 ? "Submit" : "Next"}
